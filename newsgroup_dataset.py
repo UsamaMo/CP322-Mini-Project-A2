@@ -6,6 +6,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_score
 
 # Load the 20 newsgroups dataset
 categories = ['alt.atheism', 'comp.graphics', 'sci.med', 'soc.religion.christian']
@@ -21,7 +23,7 @@ y_test = newsgroups_test.target
 
 # Define models
 models = {
-    "Logistic Regression": LogisticRegression(),
+    "Logistic Reg": LogisticRegression(),
     "Decision Tree": DecisionTreeClassifier(),
     "SVM": LinearSVC(dual=False),
     "AdaBoost": AdaBoostClassifier(),
@@ -33,7 +35,37 @@ for name, model in models.items():
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"{name} Accuracy: {accuracy}")
+    print(f"{name} - Accuracy: {accuracy:.4f}")
+
+# Initialize dictionaries to store metrics
+accuracy_scores = {}
+
+
+# Train, predict, and evaluate models
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    # Store each metric
+    accuracy_scores[name] = accuracy_score(y_test, y_pred)
+
+
+# Function to create bar plots for each metric
+def plot_metrics(metric_scores, title):
+    plt.bar(metric_scores.keys(), metric_scores.values())
+    plt.xlabel('Models')
+    plt.ylabel('Score')
+    plt.title(title)
+    plt.xticks()
+    plt.show()
+
+# Plot each metric
+plot_metrics(accuracy_scores, ' Newsgroup Model Accuracy')
+
+
+
+
+
 
 
 
@@ -75,5 +107,7 @@ for name, model in models.items():
 # #print target name of the first 10 data files
 # for t in twenty_train.target[:10]:
 #         print(twenty_train.target_names[t])
+
+
 
 
