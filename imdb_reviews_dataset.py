@@ -19,7 +19,7 @@ def read_data(path, use_subset=True, max_per_category=100):
     for label in ['pos', 'neg']:
         dir_path = os.path.join(path, label)
         files = os.listdir(dir_path)
-        # If use_subset is True, limit the number of files read
+        # If use_subset is True, use a subset from the dataset and not the full dataset
         if use_subset:
             files = files[:max_per_category]
         for file in files:
@@ -29,7 +29,7 @@ def read_data(path, use_subset=True, max_per_category=100):
                 labels.append(1 if label == 'pos' else 0)
     return texts, labels
 
-# Specify the path to your dataset
+#path to test and train folders
 train_path = 'aclImdb/train'
 test_path = 'aclImdb/test'
 
@@ -39,7 +39,7 @@ train_texts, train_labels = read_data(train_path, use_subset=True, max_per_categ
 test_texts, test_labels = read_data(test_path, use_subset=True, max_per_category=10)
 
 
-# Reading Data
+# Reading Data from the test and train folders
 train_texts, train_labels = read_data('aclImdb/train')
 test_texts, test_labels = read_data('aclImdb/test')
 
@@ -48,11 +48,11 @@ vectorizer = TfidfVectorizer(stop_words='english')
 X_train = vectorizer.fit_transform(train_texts)
 X_test = vectorizer.transform(test_texts)
 
-# Create and train models
+# Define the 5 different models
 models = {
-    "Logistic Reg": LogisticRegression(max_iter=1000),
+    "Logistic Reg": LogisticRegression(),
     "Decision Tree": DecisionTreeClassifier(),
-    "SVM": LinearSVC(dual=False,  max_iter=1000),
+    "SVM": LinearSVC(dual=False),
     "AdaBoost": AdaBoostClassifier(),
     "Random Forest": RandomForestClassifier()
 }
@@ -64,7 +64,7 @@ precision_scores = {}
 
 # Function to create bar plots for each metric
 def plot_metrics(metric_scores, title):
-    plt.figure(figsize=(10, 6))  # Increase figure size for better visibility
+    plt.figure(figsize=(10, 6))  
     plt.bar(metric_scores.keys(), metric_scores.values())
     plt.xlabel('Models')
     plt.ylabel('Score')
@@ -88,6 +88,6 @@ for name, model in models.items():
     # Print the metrics
     print(f"{name} - Accuracy: {accuracy:.4f}, Precision: {precision:.4f}")
 
-# Plot each metric after the loop
+# Plot the Accuracy and the Precision
 plot_metrics(accuracy_scores, 'IMDB Reviews Model Accuracy')
 plot_metrics(precision_scores, 'IMDB Reviews Model Precision')

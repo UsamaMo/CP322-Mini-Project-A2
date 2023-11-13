@@ -21,7 +21,7 @@ X_test = vectorizer.transform(newsgroups_test.data)
 y_train = newsgroups_train.target
 y_test = newsgroups_test.target
 
-# Define models
+# Define the 5 different models
 models = {
     "Logistic Reg": LogisticRegression(),
     "Decision Tree": DecisionTreeClassifier(),
@@ -59,7 +59,7 @@ def plot_metrics(metric_scores, title):
     plt.xticks()
     plt.show()
 
-# Plot each metric
+# Plot the Accuracy
 plot_metrics(accuracy_scores, ' Newsgroup Model Accuracy')
 
 
