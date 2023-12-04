@@ -1,13 +1,11 @@
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
-from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from sklearn.metrics import precision_score
 
 # Load the 20 newsgroups dataset
 categories = ['alt.atheism', 'comp.graphics', 'sci.med', 'soc.religion.christian']
@@ -23,91 +21,42 @@ y_test = newsgroups_test.target
 
 # Define the 5 different models
 models = {
-    "Logistic Reg": LogisticRegression(),
+    "Logistic Regression": LogisticRegression(),
     "Decision Tree": DecisionTreeClassifier(),
     "SVM": LinearSVC(dual=False),
     "AdaBoost": AdaBoostClassifier(),
     "Random Forest": RandomForestClassifier()
 }
 
-# Train, predict, and evaluate models
-for name, model in models.items():
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"{name} - Accuracy: {accuracy:.4f}")
-
 # Initialize dictionaries to store metrics
 accuracy_scores = {}
-
+precision_scores = {}
 
 # Train, predict, and evaluate models
 for name, model in models.items():
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    # Store each metric
-    accuracy_scores[name] = accuracy_score(y_test, y_pred)
+    # Calculate each metric with the 'weighted' average for multi-class classification
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred, average='weighted')
 
+    # Print the metrics
+    print(f"{name} - Accuracy: {accuracy:.4f}, Precision: {precision:.4f}")
+
+    # Store each metric in dictionaries
+    accuracy_scores[name] = accuracy
+    precision_scores[name] = precision
 
 # Function to create bar plots for each metric
 def plot_metrics(metric_scores, title):
+    plt.figure(figsize=(10, 6))  
     plt.bar(metric_scores.keys(), metric_scores.values())
     plt.xlabel('Models')
     plt.ylabel('Score')
     plt.title(title)
-    plt.xticks()
     plt.show()
 
-# Plot the Accuracy
-plot_metrics(accuracy_scores, ' Newsgroup Model Accuracy')
-
-
-
-
-
-
-
-
-
-#--------------------------------------------------------------------------------------------------------------------
-#THE CODE BELOW WAS GIVEN BY THE DATASET ITSELF TO USE FOR IMPLEMENTATION IF NEEDED
-# #--------------------------------------------------------------------------------------------------------------------
-
-# #this code was given by the newsgroup tutorial website posted in the assignment instructions
-# #https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
-
-
-# categories = ['alt.atheism', 'soc.religion.christian',
-#               'comp.graphics', 'sci.med']
-
-# #just testing to see if the function works,  takes too long to fetch data
-# print('start fetching')
-# twenty_train = fetch_20newsgroups(subset='train', categories=categories, shuffle=True, random_state=42)
-# print('stop fetching')
-
-
-# #prints Target names
-# print(twenty_train.target_names)               
-
-# #prints the length of data and filename
-# print(len(twenty_train.data))                  
-# print(len(twenty_train.filenames))
-
-
-# #prints the first 3 lines of the first data file
-# print("\n".join(twenty_train.data[0].split("\n")[:3]))
-
-# #print target name of the first data file
-# print(twenty_train.target_names[twenty_train.target[0]])
-
-# #print first 10 targets
-# print(twenty_train.target[:10])
-
-# #print target name of the first 10 data files
-# for t in twenty_train.target[:10]:
-#         print(twenty_train.target_names[t])
-
-
-
-
+# Plot the Accuracy and the Precision
+plot_metrics(accuracy_scores, 'Newsgroup Model Accuracy')
+plot_metrics(precision_scores, 'Newsgroup Model Precision')
